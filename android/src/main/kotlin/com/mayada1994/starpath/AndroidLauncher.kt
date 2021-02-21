@@ -15,6 +15,12 @@ class AndroidLauncher : AndroidApplication() {
         super.onResume()
         window.decorView.apply {
             systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+
+            setOnSystemUiVisibilityChangeListener { visibility ->
+                if (visibility == 0 || visibility == View.SYSTEM_UI_FLAG_FULLSCREEN) {
+                    systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+                }
+            }
         }
     }
 }
