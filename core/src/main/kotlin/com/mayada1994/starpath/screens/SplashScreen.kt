@@ -23,7 +23,8 @@ class SplashScreen(game: StarPath) : BaseScreen(game) {
 
         Timer().schedule(object: TimerTask(){
             override fun run() {
-                game.setScreen<MenuScreen>()
+//                game.setScreen<MenuScreen>()
+                game.setScreen<GameScreen>()
             }
         }, TimeUnit.SECONDS.toMillis(5))
     }
