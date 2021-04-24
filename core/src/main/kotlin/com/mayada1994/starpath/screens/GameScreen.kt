@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.mayada1994.starpath.StarPath
 import com.mayada1994.starpath.StarPath.Companion.UNIT_SCALE
+import com.mayada1994.starpath.ecs.component.FacingComponent
 import com.mayada1994.starpath.ecs.component.GraphicComponent
+import com.mayada1994.starpath.ecs.component.PlayerComponent
 import com.mayada1994.starpath.ecs.component.TransformComponent
 import ktx.ashley.entity
 import ktx.ashley.with
@@ -24,6 +26,8 @@ class GameScreen(game: StarPath) : BaseScreen(game) {
                 setOriginCenter()
             }
         }
+        with<PlayerComponent>()
+        with<FacingComponent>()
     }
 
     override fun render(delta: Float) {
