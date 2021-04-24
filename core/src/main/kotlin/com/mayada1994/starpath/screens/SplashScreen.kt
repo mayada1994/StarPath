@@ -26,7 +26,11 @@ class SplashScreen(game: StarPath) : BaseScreen(game) {
 //                game.setScreen<MenuScreen>()
                 game.setScreen<GameScreen>()
             }
-        }, TimeUnit.SECONDS.toMillis(5))
+        }, TimeUnit.SECONDS.toMillis(3))
+    }
+
+    override fun resize(width: Int, height: Int) {
+
     }
 
 }
