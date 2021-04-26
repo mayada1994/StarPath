@@ -4,6 +4,7 @@ import com.mayada1994.starpath.StarPath
 import com.mayada1994.starpath.ecs.component.*
 import ktx.ashley.entity
 import ktx.ashley.with
+import kotlin.math.min
 
 class GameScreen(game: StarPath) : BaseScreen(game) {
 
@@ -12,7 +13,7 @@ class GameScreen(game: StarPath) : BaseScreen(game) {
 
         game.engine.entity {
             with<TransformComponent> {
-                position.set(1f, 1f, 0f)
+                setInitialPosition(1f, 1f, 0f)
             }
             with<GraphicComponent>()
             with<PlayerComponent>()
@@ -22,7 +23,11 @@ class GameScreen(game: StarPath) : BaseScreen(game) {
     }
 
     override fun render(delta: Float) {
-        engine.update(delta)
+        engine.update(min(MAX_DELTA_TIME, delta))
+    }
+
+    companion object {
+        private const val MAX_DELTA_TIME = 1 / 20f
     }
 
 }
