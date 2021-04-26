@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -17,10 +18,12 @@ import ktx.app.KtxScreen
 
 class StarPath : KtxGame<KtxScreen>() {
 
+    val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: Batch by lazy { SpriteBatch() }
 
     private val graphicsAtlas by lazy { TextureAtlas(Gdx.files.internal("graphics/graphics.atlas")) }
+    private val backgroundTexture by lazy { Texture("graphics/background.png") }
 
     val engine: Engine by lazy {
         PooledEngine().apply {
@@ -31,7 +34,7 @@ class StarPath : KtxGame<KtxScreen>() {
                     graphicsAtlas.findRegion("player_left"),
                     graphicsAtlas.findRegion("player_right")
             ))
-            addSystem(RenderSystem(batch, gameViewport))
+            addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture))
             addSystem(RemoveSystem())
         }
     }
@@ -51,11 +54,14 @@ class StarPath : KtxGame<KtxScreen>() {
         batch.dispose()
 
         graphicsAtlas.dispose()
+        backgroundTexture.dispose()
     }
 
     companion object {
         const val UNIT_SCALE = 1 / 6f
         const val V_WIDTH = 3
         const val V_HEIGHT = 6
+        const val V_WIDTH_PIXELS = 1080
+        const val V_HEIGHT_PIXELS = 2260
     }
 }
