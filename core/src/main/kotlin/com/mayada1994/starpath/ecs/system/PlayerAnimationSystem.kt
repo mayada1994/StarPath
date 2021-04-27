@@ -9,6 +9,7 @@ import com.mayada1994.starpath.ecs.component.FacingComponent
 import com.mayada1994.starpath.ecs.component.FacingComponent.FacingDirection
 import com.mayada1994.starpath.ecs.component.GraphicComponent
 import com.mayada1994.starpath.ecs.component.PlayerComponent
+import com.mayada1994.starpath.ecs.component.TransformComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
 
@@ -31,6 +32,10 @@ class PlayerAnimationSystem(
 
     override fun entityAdded(entity: Entity) {
         entity[GraphicComponent.mapper]?.setSpriteRegion(defaultRegion)
+        entity[TransformComponent.mapper]?.let {
+            it.size.set(3f, 3f)
+            it.position.set(3f, 0f, 0f)
+        }
     }
 
     override fun entityRemoved(entity: Entity) = Unit

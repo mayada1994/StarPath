@@ -29,6 +29,7 @@ class StarPath : KtxGame<KtxScreen>() {
         PooledEngine().apply {
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
+            addSystem(BonusSystem())
             addSystem(PlayerAnimationSystem(
                     graphicsAtlas.findRegion("player_default"),
                     graphicsAtlas.findRegion("player_left"),
@@ -58,9 +59,9 @@ class StarPath : KtxGame<KtxScreen>() {
     }
 
     companion object {
-        const val UNIT_SCALE = 1 / 6f
-        const val V_WIDTH = 3
-        const val V_HEIGHT = 6
+        const val UNIT_SCALE = 1 / 18f
+        const val V_WIDTH = 9
+        const val V_HEIGHT = 18
         const val V_WIDTH_PIXELS = 1080
         const val V_HEIGHT_PIXELS = 2260
     }
