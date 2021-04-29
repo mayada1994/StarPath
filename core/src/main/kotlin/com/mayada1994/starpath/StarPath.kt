@@ -29,7 +29,7 @@ class StarPath : KtxGame<KtxScreen>() {
         PooledEngine().apply {
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
-            addSystem(BonusSystem())
+            addSystem(ItemSystem(graphicsAtlas))
             addSystem(PlayerAnimationSystem(
                     graphicsAtlas.findRegion("player_default"),
                     graphicsAtlas.findRegion("player_left"),

@@ -92,8 +92,8 @@ class MoveSystem : IteratingSystem(
 
     companion object {
         private const val UPDATE_RATE = 1 / 25f
-        private const val HOR_ACCELERATION = 5.5f
-        private const val MAX_HOR_SPEED = 5.5f
+        private const val HOR_ACCELERATION = 8.5f
+        private const val MAX_HOR_SPEED = 8.5f
     }
 
 }
