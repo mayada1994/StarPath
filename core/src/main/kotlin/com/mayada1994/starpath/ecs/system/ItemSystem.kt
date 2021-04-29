@@ -97,9 +97,18 @@ class ItemSystem(
             with<ItemComponent> {
                 type = itemType
             }
-            with<GraphicComponent>() {
-                setSpriteRegion(atlas.findRegion(itemType.atlasKey))
+
+            if (itemType is ItemType.Damage) {
+                with<AnimationComponent>() {
+                    type = itemType.animationType
+                }
+                with<GraphicComponent>()
+            } else {
+                with<GraphicComponent>() {
+                    setSpriteRegion(atlas.findRegion(itemType.atlasKey))
+                }
             }
+
             with<MoveComponent> {
                 speed.y = ITEM_SPEED
             }

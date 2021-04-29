@@ -3,6 +3,7 @@ package com.mayada1994.starpath.ecs.component
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Pool
+import com.mayada1994.starpath.ecs.component.AnimationComponent.AnimationType
 import ktx.ashley.mapperFor
 
 class ItemComponent : Component, Pool.Poolable {
@@ -13,7 +14,7 @@ class ItemComponent : Component, Pool.Poolable {
         object None : ItemType()
         data class Bonus(override val atlasKey: String, val bonusPoints: Int) : ItemType()
         data class Boost(override val atlasKey: String, val boostValue: Int) : ItemType()
-        data class Damage(override val atlasKey: String) : ItemType()
+        data class Damage(val animationType: AnimationType) : ItemType()
     }
 
     override fun reset() {
@@ -41,11 +42,11 @@ class ItemComponent : Component, Pool.Poolable {
         )
 
         private val damageItems = listOf(
-                ItemType.Damage("meteorite_blue"),
-                ItemType.Damage("meteorite_red"),
-                ItemType.Damage("meteorite_yellow"),
-                ItemType.Damage("meteorite_orange"),
-                ItemType.Damage("meteorite_white")
+                ItemType.Damage(AnimationType.METEORITE_BLUE),
+                ItemType.Damage(AnimationType.METEORITE_RED),
+                ItemType.Damage(AnimationType.METEORITE_YELLOW),
+                ItemType.Damage(AnimationType.METEORITE_ORANGE),
+                ItemType.Damage(AnimationType.METEORITE_WHITE)
         )
     }
 }

@@ -35,6 +35,7 @@ class StarPath : KtxGame<KtxScreen>() {
                     graphicsAtlas.findRegion("player_left"),
                     graphicsAtlas.findRegion("player_right")
             ))
+            addSystem(AnimationSystem(graphicsAtlas))
             addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture))
             addSystem(RemoveSystem())
         }
