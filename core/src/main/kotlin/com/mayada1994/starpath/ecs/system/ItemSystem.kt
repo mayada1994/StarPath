@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.mayada1994.starpath.StarPath
 import com.mayada1994.starpath.ecs.component.*
+import com.mayada1994.starpath.ecs.component.AnimationComponent.AnimationType
 import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomBonus
 import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomBoost
 import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomDamage
@@ -163,8 +164,28 @@ class ItemSystem(
                         it.points += itemType.bonusPoints
                     }
 
-                    is ItemType.Damage -> player.addComponent<RemoveComponent>(engine) {
-                        delay = 1f
+                    is ItemType.Damage -> {
+                        player.addComponent<RemoveComponent>(engine) {
+                            delay = 1f
+                        }
+
+                        val transform = player[TransformComponent.mapper]
+                        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$player" }
+
+                        player[GraphicComponent.mapper]?.sprite?.setAlpha(0f)
+                        engine.entity {
+                            with<TransformComponent> {
+                                size.set(DEATH_EXPLOSION_SIZE, DEATH_EXPLOSION_SIZE)
+                                setInitialPosition(transform.position.x, transform.position.y, 2f)
+                            }
+                            with<AnimationComponent> {
+                                type = AnimationType.EXPLOSION
+                            }
+                            with<GraphicComponent>()
+                            with<RemoveComponent> {
+                                delay = DEATH_EXPLOSION_DURATION
+                            }
+                        }
                     }
                     else -> LOG.error { "Unsupported item of type $itemType" }
                 }
@@ -183,6 +204,8 @@ class ItemSystem(
         private const val ITEM_SPEED = -4.5f
         private const val MIN_DAMAGE_SIZE = 2f
         private const val MAX_DAMAGE_SIZE = 5f
+        private const val DEATH_EXPLOSION_SIZE = 3f
+        private const val DEATH_EXPLOSION_DURATION = 1f
     }
 
 }
