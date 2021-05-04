@@ -12,6 +12,7 @@ import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomBonus
 import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomBoost
 import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomDamage
 import com.mayada1994.starpath.ecs.component.ItemComponent.ItemType
+import com.mayada1994.starpath.event.Event
 import ktx.ashley.*
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
@@ -20,7 +21,8 @@ import ktx.log.error
 import ktx.log.logger
 
 class ItemSystem(
-        private val atlas: TextureAtlas
+        private val atlas: TextureAtlas,
+        private val gameEventManager: Event.GameEventManager
 ) : IteratingSystem(allOf(ItemComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
 
     private class SpawnPattern(
@@ -44,19 +46,19 @@ class ItemSystem(
             SpawnPattern(type1 = randomBonus, type2 = randomDamage, type5 = randomBonus),
             SpawnPattern(type1 = randomBonus, type2 = randomBonus, type5 = randomDamage),
             SpawnPattern(type2 = randomDamage, type4 = randomBonus, type5 = randomBonus),
-            SpawnPattern(type2 = randomBonus, type4 = randomBonus),
-            SpawnPattern(type2 = randomBonus, type5 = randomDamage),
-            SpawnPattern(type1 = randomBonus, type4 = randomBonus),
-            SpawnPattern(type2 = randomDamage, type3 = randomBonus),
+            SpawnPattern(type2 = randomBonus, type3 = randomBoost, type4 = randomBonus, type5 = randomDamage),
+            SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
+            SpawnPattern(type1 = randomBonus, type2 = randomDamage, type3 = randomDamage, type4 = randomBonus),
+            SpawnPattern(type2 = randomDamage, type3 = randomBonus, type4 = randomBonus),
             SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage, type5 = randomBonus),
             SpawnPattern(type2 = randomBonus, type4 = randomBonus, type5 = randomBonus),
             SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomBonus, type5 = randomBonus),
-            SpawnPattern(type1 = randomDamage, type2 = randomDamage, type5 = randomDamage),
+            SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
             SpawnPattern(type1 = randomDamage, type2 = randomDamage, type5 = randomBonus),
             SpawnPattern(type2 = randomBonus, type4 = randomDamage, type5 = randomDamage),
-            SpawnPattern(type2 = randomBoost, type4 = randomDamage),
-            SpawnPattern(type2 = randomDamage, type5 = randomBonus),
-            SpawnPattern(type1 = randomDamage, type4 = randomDamage),
+            SpawnPattern(type2 = randomBoost, type4 = randomDamage, type5 = randomDamage),
+            SpawnPattern(type2 = randomDamage, type3 = randomBoost, type4 = randomBonus, type5 = randomBonus),
+            SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage),
             SpawnPattern(type2 = randomDamage, type3 = randomDamage),
             SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage, type5 = randomDamage),
             SpawnPattern(type2 = randomDamage, type4 = randomDamage, type5 = randomDamage),
@@ -165,6 +167,9 @@ class ItemSystem(
                     }
 
                     is ItemType.Damage -> {
+                        gameEventManager.dispatchEvent(Event.GameEvent.PlayerDeath.apply {
+                            points = player[PlayerComponent.mapper]?.points ?: 0
+                        })
                         player.addComponent<RemoveComponent>(engine) {
                             delay = 1f
                         }

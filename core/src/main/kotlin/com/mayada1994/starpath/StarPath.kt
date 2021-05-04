@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mayada1994.starpath.ecs.system.*
+import com.mayada1994.starpath.event.Event
 import com.mayada1994.starpath.screens.GameScreen
 import com.mayada1994.starpath.screens.MenuScreen
 import com.mayada1994.starpath.screens.SplashScreen
@@ -22,6 +23,8 @@ class StarPath : KtxGame<KtxScreen>() {
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: Batch by lazy { SpriteBatch() }
 
+    val gameEventManager = Event.GameEventManager()
+
     private val graphicsAtlas by lazy { TextureAtlas(Gdx.files.internal("graphics/graphics.atlas")) }
     private val backgroundTexture by lazy { Texture("graphics/background.png") }
 
@@ -29,7 +32,7 @@ class StarPath : KtxGame<KtxScreen>() {
         PooledEngine().apply {
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
-            addSystem(ItemSystem(graphicsAtlas))
+            addSystem(ItemSystem(graphicsAtlas, gameEventManager))
             addSystem(PlayerAnimationSystem(
                     graphicsAtlas.findRegion("player_default"),
                     graphicsAtlas.findRegion("player_left"),
