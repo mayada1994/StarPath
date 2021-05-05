@@ -10,4 +10,6 @@ dependencies {
 	api "io.github.libktx:ktx-graphics:$ktxVersion"
 	api "io.github.libktx:ktx-ashley:$ktxVersion"
 	api "io.github.libktx:ktx-collections:$ktxVersion"
+	api "io.github.libktx:ktx-assets-async:$ktxVersion"
+	api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
 }

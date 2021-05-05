@@ -1,5 +1,6 @@
 package com.mayada1994.starpath.screens
 
+import com.badlogic.ashley.core.Engine
 import com.mayada1994.starpath.StarPath
 import com.mayada1994.starpath.ecs.component.*
 import com.mayada1994.starpath.event.Event
@@ -9,7 +10,7 @@ import ktx.log.debug
 import ktx.log.logger
 import kotlin.math.min
 
-class GameScreen(game: StarPath) : BaseScreen(game), Event.GameEventListener {
+class GameScreen(game: StarPath, private val engine: Engine = game.engine) : BaseScreen(game), Event.GameEventListener {
 
     override fun show() {
         super.show()

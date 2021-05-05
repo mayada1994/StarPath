@@ -4,22 +4,48 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.mayada1994.starpath.StarPath
+import com.mayada1994.starpath.asset.Asset
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
+import ktx.async.KtxAsync
+import ktx.collections.gdxArrayOf
 import ktx.graphics.use
 
 
 class SplashScreen(game: StarPath) : BaseScreen(game) {
 
+    override fun show() {
+        //queue asset loading
+        val assetRefs = gdxArrayOf(
+            Asset.TextureAsset.values().map { assets.loadAsync(it.descriptor) },
+            Asset.TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) }
+        ).flatten()
+
+        //change to GameScreen on assets loading finished
+        KtxAsync.launch {
+            assetRefs.joinAll()
+            assetsLoaded()
+        }
+    }
+
+    private fun assetsLoaded() {
+        with(game) {
+            addScreen(GameScreen(this))
+            setScreen<GameScreen>()
+            removeScreen<SplashScreen>()
+        }
+        dispose()
+    }
+
     override fun render(delta: Float) {
         batch.use {
             Sprite(
-                    Texture(Gdx.files.internal("graphics/splash_screen.png"))
+                Texture(Gdx.files.internal("graphics/splash_screen.png"))
             ).apply {
                 setSize(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
                 draw(it)
             }
         }
-
-        game.setScreen<MenuScreen>()
     }
 
     override fun resize(width: Int, height: Int) = Unit
