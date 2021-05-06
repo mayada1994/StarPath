@@ -1,5 +1,6 @@
 package com.mayada1994.starpath.screens
 
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.mayada1994.starpath.StarPath
@@ -15,7 +16,8 @@ abstract class BaseScreen(
         val uiViewport: Viewport = game.uiViewport,
         val gameEventManager: Event.GameEventManager = game.gameEventManager,
         val assets: AssetStorage = game.assets,
-        val audioService: AudioService = game.audioService
+        val audioService: AudioService = game.audioService,
+        val preferences: Preferences = game.preferences
 ) : KtxScreen {
 
     override fun resize(width: Int, height: Int) {

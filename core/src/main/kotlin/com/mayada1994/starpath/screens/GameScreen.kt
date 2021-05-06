@@ -9,6 +9,9 @@ import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.log.debug
 import ktx.log.logger
+import ktx.preferences.flush
+import ktx.preferences.get
+import ktx.preferences.set
 import kotlin.math.min
 
 class GameScreen(game: StarPath, private val engine: Engine = game.engine) : BaseScreen(game),
@@ -42,17 +45,23 @@ class GameScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
         gameEventManager.removeListener(this)
     }
 
-    companion object {
-        private const val MAX_DELTA_TIME = 1 / 20f
-    }
-
     override fun onEvent(event: Event.GameEvent) {
         if (event is Event.GameEvent.PlayerDeath) {
             audioService.play(MusicAsset.GAME_OVER)
+            preferences.flush {
+                if (this[PREFERENCES_HIGHSCORE_KEY, 0] < event.points) {
+                    this[PREFERENCES_HIGHSCORE_KEY] = event.points
+                }
+            }
             logger<GameScreen>().debug {
                 "Death with ${event.points} points"
             }
         }
+    }
+
+    companion object {
+        private const val MAX_DELTA_TIME = 1 / 20f
+        private const val PREFERENCES_HIGHSCORE_KEY = "highscore"
     }
 
 }

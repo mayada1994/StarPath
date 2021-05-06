@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -30,6 +31,7 @@ class StarPath : KtxGame<KtxScreen>() {
         AssetStorage()
     }
     val audioService: AudioService by lazy { DefaultAudioService(assets) }
+    val preferences: Preferences by lazy { Gdx.app.getPreferences(APP_PREFERENCES) }
 
     val engine: Engine by lazy {
         val graphicsAtlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
@@ -77,5 +79,6 @@ class StarPath : KtxGame<KtxScreen>() {
         const val V_HEIGHT = 18
         const val V_WIDTH_PIXELS = 1080
         const val V_HEIGHT_PIXELS = 2260
+        const val APP_PREFERENCES = "star_path"
     }
 }
