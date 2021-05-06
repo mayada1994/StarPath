@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.mayada1994.starpath.StarPath
+import com.mayada1994.starpath.asset.Asset
+import com.mayada1994.starpath.audio.Audio.AudioService
 import com.mayada1994.starpath.ecs.component.*
 import com.mayada1994.starpath.ecs.component.AnimationComponent.AnimationType
 import com.mayada1994.starpath.ecs.component.ItemComponent.Companion.randomBonus
@@ -21,24 +23,30 @@ import ktx.log.error
 import ktx.log.logger
 
 class ItemSystem(
-        private val atlas: TextureAtlas,
-        private val gameEventManager: Event.GameEventManager
-) : IteratingSystem(allOf(ItemComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
+    private val atlas: TextureAtlas,
+    private val gameEventManager: Event.GameEventManager,
+    private val audioService: AudioService
+) : IteratingSystem(
+    allOf(
+        ItemComponent::class,
+        TransformComponent::class
+    ).exclude(RemoveComponent::class).get()
+) {
 
     private class SpawnPattern(
-            type1: ItemType = ItemType.None,
-            type2: ItemType = ItemType.None,
-            type3: ItemType = ItemType.None,
-            type4: ItemType = ItemType.None,
-            type5: ItemType = ItemType.None,
-            val types: GdxArray<ItemType> = gdxArrayOf(type1, type2, type3, type4, type5)
+        type1: ItemType = ItemType.None,
+        type2: ItemType = ItemType.None,
+        type3: ItemType = ItemType.None,
+        type4: ItemType = ItemType.None,
+        type5: ItemType = ItemType.None,
+        val types: GdxArray<ItemType> = gdxArrayOf(type1, type2, type3, type4, type5)
     )
 
     private val playerBoundingRect = Rectangle()
     private val itemBoundingRect = Rectangle()
     private val playerEntities by lazy {
         engine.getEntitiesFor(
-                allOf(PlayerComponent::class).exclude(RemoveComponent::class).get()
+            allOf(PlayerComponent::class).exclude(RemoveComponent::class).get()
         )
     }
     private var spawnTime = 0f
@@ -135,16 +143,16 @@ class ItemSystem(
         playerEntities.forEach { player ->
             player[TransformComponent.mapper]?.let { playerTransform ->
                 playerBoundingRect.set(
-                        playerTransform.position.x,
-                        playerTransform.position.y,
-                        playerTransform.size.x * 0.7f,
-                        playerTransform.size.y * 0.7f
+                    playerTransform.position.x,
+                    playerTransform.position.y,
+                    playerTransform.size.x * 0.7f,
+                    playerTransform.size.y * 0.7f
                 )
                 itemBoundingRect.set(
-                        transform.position.x,
-                        transform.position.y,
-                        transform.size.x * itemCorrelationValue,
-                        transform.size.y * itemCorrelationValue
+                    transform.position.x,
+                    transform.position.y,
+                    transform.size.x * itemCorrelationValue,
+                    transform.size.y * itemCorrelationValue
                 )
 
                 if (playerBoundingRect.overlaps(itemBoundingRect)) {
@@ -160,10 +168,16 @@ class ItemSystem(
                 LOG.debug { "Picking up item of itemType $itemType" }
 
                 when (itemType) {
-                    is ItemType.Boost -> player[PlayerComponent.mapper]?.let { it.points += it.points * itemType.boostValue / 100 }
+                    is ItemType.Boost -> {
+                        player[PlayerComponent.mapper]?.let { it.points += it.points * itemType.boostValue / 100 }
+                        audioService.play(Asset.SoundAsset.BOOST)
+                    }
 
-                    is ItemType.Bonus -> player[PlayerComponent.mapper]?.let {
-                        it.points += itemType.bonusPoints
+                    is ItemType.Bonus -> {
+                        player[PlayerComponent.mapper]?.let {
+                            it.points += itemType.bonusPoints
+                        }
+                        audioService.play(Asset.SoundAsset.BONUS)
                     }
 
                     is ItemType.Damage -> {
@@ -191,6 +205,7 @@ class ItemSystem(
                                 delay = DEATH_EXPLOSION_DURATION
                             }
                         }
+                        audioService.play(Asset.SoundAsset.DAMAGE)
                     }
                     else -> LOG.error { "Unsupported item of type $itemType" }
                 }

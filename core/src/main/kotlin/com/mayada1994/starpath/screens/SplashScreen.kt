@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.mayada1994.starpath.StarPath
-import com.mayada1994.starpath.asset.Asset
+import com.mayada1994.starpath.asset.Asset.*
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
@@ -17,8 +17,10 @@ class SplashScreen(game: StarPath) : BaseScreen(game) {
     override fun show() {
         //queue asset loading
         val assetRefs = gdxArrayOf(
-            Asset.TextureAsset.values().map { assets.loadAsync(it.descriptor) },
-            Asset.TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) }
+            TextureAsset.values().map { assets.loadAsync(it.descriptor) },
+            TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) },
+            SoundAsset.values().map { assets.loadAsync(it.descriptor) },
+            MusicAsset.values().map { assets.loadAsync(it.descriptor) }
         ).flatten()
 
         //change to GameScreen on assets loading finished

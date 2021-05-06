@@ -36,17 +36,17 @@ class ItemComponent : Component, Pool.Poolable {
         private val boostItems = listOf(ItemType.Boost("boost", 5))
 
         private val bonusItems = listOf(
-                ItemType.Bonus("star_orange", 5),
-                ItemType.Bonus("star_yellow", 10),
-                ItemType.Bonus("star_blue", 25)
+            ItemType.Bonus("star_orange", 5),
+            ItemType.Bonus("star_yellow", 10),
+            ItemType.Bonus("star_blue", 25)
         )
 
         private val damageItems = listOf(
-                ItemType.Damage(AnimationType.METEORITE_BLUE),
-                ItemType.Damage(AnimationType.METEORITE_RED),
-                ItemType.Damage(AnimationType.METEORITE_YELLOW),
-                ItemType.Damage(AnimationType.METEORITE_ORANGE),
-                ItemType.Damage(AnimationType.METEORITE_WHITE)
+            ItemType.Damage(AnimationType.METEORITE_BLUE),
+            ItemType.Damage(AnimationType.METEORITE_RED),
+            ItemType.Damage(AnimationType.METEORITE_YELLOW),
+            ItemType.Damage(AnimationType.METEORITE_ORANGE),
+            ItemType.Damage(AnimationType.METEORITE_WHITE)
         )
     }
 }

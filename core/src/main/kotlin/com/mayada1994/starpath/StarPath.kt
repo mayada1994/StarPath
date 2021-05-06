@@ -7,7 +7,10 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.mayada1994.starpath.asset.Asset
+import com.mayada1994.starpath.asset.Asset.TextureAsset
+import com.mayada1994.starpath.asset.Asset.TextureAtlasAsset
+import com.mayada1994.starpath.audio.Audio.AudioService
+import com.mayada1994.starpath.audio.Audio.DefaultAudioService
 import com.mayada1994.starpath.ecs.system.*
 import com.mayada1994.starpath.event.Event
 import com.mayada1994.starpath.screens.SplashScreen
@@ -26,13 +29,14 @@ class StarPath : KtxGame<KtxScreen>() {
         KtxAsync.initiate()
         AssetStorage()
     }
+    val audioService: AudioService by lazy { DefaultAudioService(assets) }
 
     val engine: Engine by lazy {
-        val graphicsAtlas = assets[Asset.TextureAtlasAsset.GRAPHICS.descriptor]
+        val graphicsAtlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
         PooledEngine().apply {
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
-            addSystem(ItemSystem(graphicsAtlas, gameEventManager))
+            addSystem(ItemSystem(graphicsAtlas, gameEventManager, audioService))
             addSystem(
                 PlayerAnimationSystem(
                     graphicsAtlas.findRegion("player_default"),
@@ -46,7 +50,7 @@ class StarPath : KtxGame<KtxScreen>() {
                     batch,
                     gameViewport,
                     uiViewport,
-                    assets[Asset.TextureAsset.BACKGROUND.descriptor]
+                    assets[TextureAsset.BACKGROUND.descriptor]
                 )
             )
             addSystem(RemoveSystem())
