@@ -1,7 +1,9 @@
 package com.mayada1994.starpath.screens
 
 import com.badlogic.ashley.core.Engine
+import com.badlogic.gdx.Gdx
 import com.mayada1994.starpath.StarPath
+import com.mayada1994.starpath.StarPath.Companion.PREFERENCES_HIGHSCORE_KEY
 import com.mayada1994.starpath.asset.Asset.MusicAsset
 import com.mayada1994.starpath.ecs.component.*
 import com.mayada1994.starpath.event.Event
@@ -47,7 +49,6 @@ class GameScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
 
     override fun onEvent(event: Event.GameEvent) {
         if (event is Event.GameEvent.PlayerDeath) {
-            audioService.play(MusicAsset.GAME_OVER)
             preferences.flush {
                 if (this[PREFERENCES_HIGHSCORE_KEY, 0] < event.points) {
                     this[PREFERENCES_HIGHSCORE_KEY] = event.points
@@ -56,12 +57,27 @@ class GameScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
             logger<GameScreen>().debug {
                 "Death with ${event.points} points"
             }
+            Thread {
+                val time = System.currentTimeMillis()
+                while (System.currentTimeMillis() < time + 1700) {
+                    logger<GameScreen>().debug {
+                        "Waiting for animation end"
+                    }
+                }
+                Gdx.app.postRunnable {
+                    with(game) {
+                        addScreen(MenuScreen(this))
+                        setScreen<MenuScreen>()
+                        removeScreen<GameScreen>()
+                    }
+                    dispose()
+                }
+            }.start()
         }
     }
 
     companion object {
         private const val MAX_DELTA_TIME = 1 / 20f
-        private const val PREFERENCES_HIGHSCORE_KEY = "highscore"
     }
 
 }

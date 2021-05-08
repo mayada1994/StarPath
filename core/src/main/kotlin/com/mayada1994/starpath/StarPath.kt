@@ -7,22 +7,34 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.mayada1994.starpath.asset.Asset.TextureAsset
-import com.mayada1994.starpath.asset.Asset.TextureAtlasAsset
+import com.badlogic.gdx.utils.viewport.Viewport
+import com.mayada1994.starpath.asset.Asset.*
 import com.mayada1994.starpath.audio.Audio.AudioService
 import com.mayada1994.starpath.audio.Audio.DefaultAudioService
 import com.mayada1994.starpath.ecs.system.*
 import com.mayada1994.starpath.event.Event
 import com.mayada1994.starpath.screens.SplashScreen
+import com.mayada1994.starpath.ui.Skin.createSkin
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.collections.gdxArrayOf
 
 class StarPath : KtxGame<KtxScreen>() {
 
-    val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
+    val uiViewport: Viewport by lazy {
+        FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+    }
+    val stage: Stage by lazy {
+        val result = Stage(uiViewport, batch)
+        Gdx.input.inputProcessor = result
+        result
+    }
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: Batch by lazy { SpriteBatch() }
     val gameEventManager = Event.GameEventManager()
@@ -62,8 +74,17 @@ class StarPath : KtxGame<KtxScreen>() {
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
 
-        addScreen(SplashScreen(this))
-        setScreen<SplashScreen>()
+        val assetRefs = gdxArrayOf(
+            TextureAtlasAsset.values().filter { it.isSkinAtlas }
+                .map { assets.loadAsync(it.descriptor) },
+            BitmapFontAsset.values().map { assets.loadAsync(it.descriptor) }
+        ).flatten()
+        KtxAsync.launch {
+            assetRefs.joinAll()
+            createSkin(assets)
+            addScreen(SplashScreen(this@StarPath))
+            setScreen<SplashScreen>()
+        }
     }
 
     override fun dispose() {
@@ -71,14 +92,14 @@ class StarPath : KtxGame<KtxScreen>() {
 
         batch.dispose()
         assets.dispose()
+        stage.dispose()
     }
 
     companion object {
         const val UNIT_SCALE = 1 / 18f
         const val V_WIDTH = 9
         const val V_HEIGHT = 18
-        const val V_WIDTH_PIXELS = 1080
-        const val V_HEIGHT_PIXELS = 2260
         const val APP_PREFERENCES = "star_path"
+        const val PREFERENCES_HIGHSCORE_KEY = "highscore"
     }
 }

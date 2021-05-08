@@ -32,8 +32,8 @@ class SplashScreen(game: StarPath) : BaseScreen(game) {
 
     private fun assetsLoaded() {
         with(game) {
-            addScreen(GameScreen(this))
-            setScreen<GameScreen>()
+            addScreen(MenuScreen(this))
+            setScreen<MenuScreen>()
             removeScreen<SplashScreen>()
         }
         dispose()
