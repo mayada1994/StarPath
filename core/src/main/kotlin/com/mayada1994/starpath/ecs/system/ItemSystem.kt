@@ -51,26 +51,61 @@ class ItemSystem(
     }
     private var spawnTime = 0f
     private val spawnPatterns = gdxArrayOf(
-            SpawnPattern(type1 = randomBonus, type2 = randomDamage, type5 = randomBonus),
-            SpawnPattern(type1 = randomBonus, type2 = randomBonus, type5 = randomDamage),
-            SpawnPattern(type2 = randomDamage, type4 = randomBonus, type5 = randomBonus),
-            SpawnPattern(type2 = randomBonus, type3 = randomBoost, type4 = randomBonus, type5 = randomDamage),
-            SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
-            SpawnPattern(type1 = randomBonus, type2 = randomDamage, type3 = randomDamage, type4 = randomBonus),
-            SpawnPattern(type2 = randomDamage, type3 = randomBonus, type4 = randomBonus),
-            SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage, type5 = randomBonus),
-            SpawnPattern(type2 = randomBonus, type4 = randomBonus, type5 = randomBonus),
-            SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomBonus, type5 = randomBonus),
-            SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
-            SpawnPattern(type1 = randomDamage, type2 = randomDamage, type5 = randomBonus),
-            SpawnPattern(type2 = randomBonus, type4 = randomDamage, type5 = randomDamage),
-            SpawnPattern(type2 = randomBoost, type4 = randomDamage, type5 = randomDamage),
-            SpawnPattern(type2 = randomDamage, type3 = randomBoost, type4 = randomBonus, type5 = randomBonus),
-            SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage),
-            SpawnPattern(type2 = randomDamage, type3 = randomDamage),
-            SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage, type5 = randomDamage),
-            SpawnPattern(type2 = randomDamage, type4 = randomDamage, type5 = randomDamage),
-            SpawnPattern(type1 = randomDamage, type2 = randomBonus, type4 = randomDamage, type5 = randomDamage)
+        SpawnPattern(type1 = randomBonus, type2 = randomDamage, type5 = randomBonus),
+        SpawnPattern(type1 = randomBonus, type2 = randomBonus, type5 = randomDamage),
+        SpawnPattern(type2 = randomDamage, type4 = randomBonus, type5 = randomBonus),
+        SpawnPattern(
+            type2 = randomBonus,
+            type3 = randomBoost,
+            type4 = randomBonus,
+            type5 = randomDamage
+        ),
+        SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
+        SpawnPattern(
+            type1 = randomBonus,
+            type2 = randomDamage,
+            type3 = randomDamage,
+            type4 = randomBonus
+        ),
+        SpawnPattern(type2 = randomDamage, type3 = randomBonus, type4 = randomBonus),
+        SpawnPattern(
+            type1 = randomBonus,
+            type2 = randomBonus,
+            type4 = randomDamage,
+            type5 = randomBonus
+        ),
+        SpawnPattern(type2 = randomBonus, type4 = randomBonus, type5 = randomBonus),
+        SpawnPattern(
+            type1 = randomBonus,
+            type2 = randomBonus,
+            type4 = randomBonus,
+            type5 = randomBonus
+        ),
+        SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
+        SpawnPattern(type1 = randomDamage, type2 = randomDamage, type5 = randomBonus),
+        SpawnPattern(type2 = randomBonus, type4 = randomDamage, type5 = randomDamage),
+        SpawnPattern(type2 = randomBoost, type4 = randomDamage, type5 = randomDamage),
+        SpawnPattern(
+            type2 = randomDamage,
+            type3 = randomBoost,
+            type4 = randomBonus,
+            type5 = randomBonus
+        ),
+        SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage),
+        SpawnPattern(type2 = randomDamage, type3 = randomDamage),
+        SpawnPattern(
+            type1 = randomBonus,
+            type2 = randomBonus,
+            type4 = randomDamage,
+            type5 = randomDamage
+        ),
+        SpawnPattern(type2 = randomDamage, type4 = randomDamage, type5 = randomDamage),
+        SpawnPattern(
+            type1 = randomDamage,
+            type2 = randomBonus,
+            type4 = randomDamage,
+            type5 = randomDamage
+        )
     )
     private val currentSpawnPattern = GdxArray<ItemType>(spawnPatterns.size)
 
@@ -81,7 +116,12 @@ class ItemSystem(
             spawnTime = MathUtils.random(MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL)
 
             if (currentSpawnPattern.isEmpty) {
-                currentSpawnPattern.addAll(spawnPatterns[MathUtils.random(0, spawnPatterns.size - 1)].types)
+                currentSpawnPattern.addAll(
+                    spawnPatterns[MathUtils.random(
+                        0,
+                        spawnPatterns.size - 1
+                    )].types
+                )
                 LOG.debug { "Next pattern: $currentSpawnPattern" }
             }
 
@@ -91,7 +131,11 @@ class ItemSystem(
                 return
             }
 
-            spawnItem(itemType, x = 1f * MathUtils.random(0, StarPath.V_WIDTH - 1), y = StarPath.V_HEIGHT.toFloat())
+            spawnItem(
+                itemType,
+                x = 1f * MathUtils.random(0, StarPath.V_WIDTH - 1),
+                y = StarPath.V_HEIGHT.toFloat()
+            )
         }
     }
 
@@ -169,13 +213,25 @@ class ItemSystem(
 
                 when (itemType) {
                     is ItemType.Boost -> {
-                        player[PlayerComponent.mapper]?.let { it.points += it.points * itemType.boostValue / 100 }
+                        player[PlayerComponent.mapper]?.let {
+                            it.points += it.points * itemType.boostValue / 100
+                            gameEventManager.dispatchEvent(Event.GameEvent.CollectBonus.apply {
+                                points = it.points
+                                type = itemType
+                                this.player = player
+                            })
+                        }
                         audioService.play(Asset.SoundAsset.BOOST)
                     }
 
                     is ItemType.Bonus -> {
                         player[PlayerComponent.mapper]?.let {
                             it.points += itemType.bonusPoints
+                            gameEventManager.dispatchEvent(Event.GameEvent.CollectBonus.apply {
+                                points = it.points
+                                type = itemType
+                                this.player = player
+                            })
                         }
                         audioService.play(Asset.SoundAsset.BONUS)
                     }

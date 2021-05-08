@@ -7,6 +7,8 @@ import com.mayada1994.starpath.StarPath.Companion.PREFERENCES_HIGHSCORE_KEY
 import com.mayada1994.starpath.asset.Asset.MusicAsset
 import com.mayada1994.starpath.ecs.component.*
 import com.mayada1994.starpath.event.Event
+import com.mayada1994.starpath.ui.GameUI
+import ktx.actors.plusAssign
 import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.log.debug
@@ -19,10 +21,13 @@ import kotlin.math.min
 class GameScreen(game: StarPath, private val engine: Engine = game.engine) : BaseScreen(game),
     Event.GameEventListener {
 
+    private val ui = GameUI()
+
     override fun show() {
         super.show()
 
         gameEventManager.addListener(Event.GameEvent.PlayerDeath::class, this)
+        gameEventManager.addListener(Event.GameEvent.CollectBonus::class, this)
 
         audioService.play(MusicAsset.GAME)
 
@@ -35,44 +40,57 @@ class GameScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
             with<FacingComponent>()
             with<MoveComponent>()
         }
+
+        ui.run {
+            stage += this.table
+            updateHighScore(preferences[PREFERENCES_HIGHSCORE_KEY, 0])
+        }
     }
 
     override fun render(delta: Float) {
         engine.update(min(MAX_DELTA_TIME, delta))
         audioService.update()
+
+        stage.run {
+            viewport.apply()
+            act()
+            draw()
+        }
     }
 
     override fun hide() {
         super.hide()
+        stage.dispose()
         gameEventManager.removeListener(this)
     }
 
     override fun onEvent(event: Event.GameEvent) {
-        if (event is Event.GameEvent.PlayerDeath) {
-            preferences.flush {
-                if (this[PREFERENCES_HIGHSCORE_KEY, 0] < event.points) {
-                    this[PREFERENCES_HIGHSCORE_KEY] = event.points
-                }
-            }
-            logger<GameScreen>().debug {
-                "Death with ${event.points} points"
-            }
-            Thread {
-                val time = System.currentTimeMillis()
-                while (System.currentTimeMillis() < time + 1700) {
-                    logger<GameScreen>().debug {
-                        "Waiting for animation end"
+        when (event) {
+            is Event.GameEvent.PlayerDeath -> {
+                preferences.flush {
+                    if (this[PREFERENCES_HIGHSCORE_KEY, 0] < event.points) {
+                        this[PREFERENCES_HIGHSCORE_KEY] = event.points
                     }
                 }
-                Gdx.app.postRunnable {
-                    with(game) {
-                        addScreen(MenuScreen(this))
-                        setScreen<MenuScreen>()
-                        removeScreen<GameScreen>()
+                Thread {
+                    val time = System.currentTimeMillis()
+                    while (System.currentTimeMillis() < time + 1700) {
+                        logger<GameScreen>().debug {
+                            "Waiting for animation end"
+                        }
                     }
-                    dispose()
-                }
-            }.start()
+                    Gdx.app.postRunnable {
+                        with(game) {
+                            addScreen(MenuScreen(this))
+                            setScreen<MenuScreen>()
+                            removeScreen<GameScreen>()
+                        }
+                        dispose()
+                    }
+                }.start()
+            }
+
+            is Event.GameEvent.CollectBonus -> ui.updateCurrentScore(event.points)
         }
     }
 

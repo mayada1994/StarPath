@@ -12,14 +12,15 @@ class Event {
         object PlayerDeath : GameEvent() {
             var points = 0
 
-            override fun toString() = "GameEventPlayerDeath(points=$points)"
+            override fun toString() = "PlayerDeath(points=$points)"
         }
 
         object CollectBonus : GameEvent() {
             lateinit var player: Entity
             var type: ItemType = ItemType.None
+            var points = 0
 
-            override fun toString() = "GameEventCollectBonus(player=$player,type=$type)"
+            override fun toString() = "CollectBonus(player=$player, type=$type, score=$points)"
         }
     }
 

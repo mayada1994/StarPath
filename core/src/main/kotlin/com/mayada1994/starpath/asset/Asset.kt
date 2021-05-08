@@ -56,8 +56,7 @@ class Asset {
         )
     ) {
         MENU("menu.ogg"),
-        GAME("game.ogg"),
-        GAME_OVER("gameOver.ogg")
+        GAME("game.ogg")
     }
 
     enum class BitmapFontAsset(

@@ -17,10 +17,10 @@ class MenuUI {
 
     init {
         table = scene2d.table {
-            defaults().padTop(MENU_DEFAULT_PADDING).padBottom(MENU_DEFAULT_PADDING).expandX().fillX()
+            defaults().expandX().fillX()
 
             table {
-                defaults().pad(0f).expandX().fillX()
+                defaults().expandX().fillX()
 
                 startGameButton = textButton("Start Game", Skin.SkinTextButton.DEFAULT.name)
                 row()
@@ -37,6 +37,7 @@ class MenuUI {
                 center()
                 pack()
             }
+            row()
 
             setFillParent(true)
             center()
@@ -53,7 +54,6 @@ class MenuUI {
     }
 
     companion object {
-        private const val MENU_DEFAULT_PADDING = 400f
         private const val MAX_HIGHSCORE_DISPLAYED = 999
     }
 }
