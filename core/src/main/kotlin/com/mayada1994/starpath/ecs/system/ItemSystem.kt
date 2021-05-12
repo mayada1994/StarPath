@@ -21,6 +21,7 @@ import ktx.collections.gdxArrayOf
 import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
+import kotlin.math.max
 
 class ItemSystem(
     private val atlas: TextureAtlas,
@@ -51,16 +52,29 @@ class ItemSystem(
     }
     private var spawnTime = 0f
     private val spawnPatterns = gdxArrayOf(
-        SpawnPattern(type1 = randomBonus, type2 = randomDamage, type5 = randomBonus),
+        SpawnPattern(
+            type1 = randomBonus,
+            type2 = randomDamage,
+            type3 = randomDamage,
+            type4 = randomDamage,
+            type5 = randomBonus
+        ),
         SpawnPattern(type1 = randomBonus, type2 = randomBonus, type5 = randomDamage),
         SpawnPattern(type2 = randomDamage, type4 = randomBonus, type5 = randomBonus),
         SpawnPattern(
+            type1 = randomDamage,
             type2 = randomBonus,
             type3 = randomBoost,
             type4 = randomBonus,
             type5 = randomDamage
         ),
-        SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
+        SpawnPattern(
+            type1 = randomDamage,
+            type2 = randomBonus,
+            randomBonus,
+            randomDamage,
+            type5 = randomDamage
+        ),
         SpawnPattern(
             type1 = randomBonus,
             type2 = randomDamage,
@@ -71,6 +85,7 @@ class ItemSystem(
         SpawnPattern(
             type1 = randomBonus,
             type2 = randomBonus,
+            type3 = randomDamage,
             type4 = randomDamage,
             type5 = randomBonus
         ),
@@ -78,12 +93,29 @@ class ItemSystem(
         SpawnPattern(
             type1 = randomBonus,
             type2 = randomBonus,
+            type3 = randomDamage,
             type4 = randomBonus,
             type5 = randomBonus
         ),
-        SpawnPattern(type1 = randomDamage, type2 = randomBonus, type5 = randomDamage),
-        SpawnPattern(type1 = randomDamage, type2 = randomDamage, type5 = randomBonus),
-        SpawnPattern(type2 = randomBonus, type4 = randomDamage, type5 = randomDamage),
+        SpawnPattern(
+            type1 = randomDamage,
+            type2 = randomBonus,
+            type3 = randomDamage,
+            type4 = randomDamage,
+            type5 = randomDamage
+        ),
+        SpawnPattern(
+            type1 = randomDamage,
+            type2 = randomDamage,
+            type3 = randomBonus,
+            type5 = randomBonus
+        ),
+        SpawnPattern(
+            type1 = randomBonus,
+            type2 = randomBonus,
+            type4 = randomDamage,
+            type5 = randomDamage
+        ),
         SpawnPattern(type2 = randomBoost, type4 = randomDamage, type5 = randomDamage),
         SpawnPattern(
             type2 = randomDamage,
@@ -92,14 +124,24 @@ class ItemSystem(
             type5 = randomBonus
         ),
         SpawnPattern(type1 = randomBonus, type2 = randomBonus, type4 = randomDamage),
-        SpawnPattern(type2 = randomDamage, type3 = randomDamage),
+        SpawnPattern(
+            type2 = randomDamage,
+            type3 = randomDamage,
+            type4 = randomBonus,
+            type5 = randomDamage
+        ),
         SpawnPattern(
             type1 = randomBonus,
             type2 = randomBonus,
             type4 = randomDamage,
             type5 = randomDamage
         ),
-        SpawnPattern(type2 = randomDamage, type4 = randomDamage, type5 = randomDamage),
+        SpawnPattern(
+            type2 = randomDamage,
+            type3 = randomBonus,
+            type4 = randomDamage,
+            type5 = randomDamage
+        ),
         SpawnPattern(
             type1 = randomDamage,
             type2 = randomBonus,
@@ -109,9 +151,19 @@ class ItemSystem(
     )
     private val currentSpawnPattern = GdxArray<ItemType>(spawnPatterns.size)
 
+    private var speedAccelerationTime = SPEED_UPDATE_INTERVAL
+    private var currentSpeedValue = DEFAULT_ITEM_SPEED
+
     override fun update(deltaTime: Float) {
         super.update(deltaTime)
         spawnTime -= deltaTime
+        speedAccelerationTime -= deltaTime
+
+        if (speedAccelerationTime <= 0f) {
+            speedAccelerationTime = SPEED_UPDATE_INTERVAL
+            currentSpeedValue += currentSpeedValue * SPEED_UPDATE_VALUE
+        }
+
         if (spawnTime <= 0f) {
             spawnTime = MathUtils.random(MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL)
 
@@ -165,7 +217,7 @@ class ItemSystem(
             }
 
             with<MoveComponent> {
-                speed.y = ITEM_SPEED
+                speed.y = max(currentSpeedValue, MAX_ITEM_SPEED)
             }
         }
     }
@@ -277,11 +329,14 @@ class ItemSystem(
         private val LOG = logger<ItemSystem>()
         private const val MAX_SPAWN_INTERVAL = 1.5f
         private const val MIN_SPAWN_INTERVAL = 0.9f
-        private const val ITEM_SPEED = -4.5f
+        private const val DEFAULT_ITEM_SPEED = -4.5f
+        private const val MAX_ITEM_SPEED = -15f
         private const val MIN_DAMAGE_SIZE = 2f
         private const val MAX_DAMAGE_SIZE = 5f
         private const val DEATH_EXPLOSION_SIZE = 3f
         private const val DEATH_EXPLOSION_DURATION = 1f
+        private const val SPEED_UPDATE_INTERVAL = 90f
+        private const val SPEED_UPDATE_VALUE = 0.25f
     }
 
 }
