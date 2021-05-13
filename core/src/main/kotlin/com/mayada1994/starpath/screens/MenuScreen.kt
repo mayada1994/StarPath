@@ -26,7 +26,10 @@ class MenuScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
             dispose()
         }
         rulesButton.onClick {
-
+            with(game) {
+                addScreen(RulesScreen(this))
+                setScreen<RulesScreen>()
+            }
         }
         creditsButton.onClick {
             with(game) {
