@@ -6,6 +6,7 @@ import com.mayada1994.starpath.asset.Asset
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
 import ktx.style.label
+import ktx.style.scrollPane
 import ktx.style.skin
 import ktx.style.textButton
 
@@ -20,8 +21,11 @@ object Skin {
     }
 
     enum class SkinImage(val atlasKey: String) {
-        BUTTON("button"),
-        STATS_STAR("star")
+        BUTTON("button")
+    }
+
+    enum class SkinScrollPane {
+        DEFAULT
     }
 
     fun createSkin(assets: AssetStorage) {
@@ -31,6 +35,7 @@ object Skin {
         Scene2DSkin.defaultSkin = skin(atlas) { skin ->
             skin.createLabelStyles(defaultFont, gradientFont)
             skin.createTextButtonStyles(gradientFont, this)
+            skin.createScrollPaneStyles()
         }
     }
 
@@ -55,6 +60,10 @@ object Skin {
         label(SkinLabel.GRADIENT.name) {
             font = gradientFont
         }
+    }
+
+    private fun Skin.createScrollPaneStyles() {
+        scrollPane(SkinScrollPane.DEFAULT.name)
     }
 
 }

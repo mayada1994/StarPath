@@ -88,6 +88,9 @@ class Audio {
             KtxAsync.launch {
                 musicDeferred.join()
                 if (assets.isLoaded(musicAsset.descriptor)) {
+                    if (currentMusicAsset == musicAsset) {
+                        return@launch
+                    }
                     currentMusic?.stop()
                     val currentAsset = currentMusicAsset
                     if (currentAsset != null) {

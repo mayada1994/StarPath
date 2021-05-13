@@ -1,6 +1,5 @@
 package com.mayada1994.starpath.ui
 
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.scene2d
@@ -11,7 +10,7 @@ import ktx.scene2d.textButton
 class MenuUI {
     val table: KTableWidget
     val startGameButton: TextButton
-    private val highScoreButton: TextButton
+    val rulesButton: TextButton
     val creditsButton: TextButton
     val quitGameButton: TextButton
 
@@ -25,7 +24,7 @@ class MenuUI {
                 startGameButton = textButton("Start Game", Skin.SkinTextButton.DEFAULT.name)
                 row()
 
-                highScoreButton = textButton("Highscore", Skin.SkinTextButton.DEFAULT.name)
+                rulesButton = textButton("Rules", Skin.SkinTextButton.DEFAULT.name)
                 row()
 
                 creditsButton = textButton("Credits", Skin.SkinTextButton.DEFAULT.name)
@@ -45,15 +44,4 @@ class MenuUI {
         }
     }
 
-    fun updateHighScore(highScore: Int) {
-        highScoreButton.label.run {
-            text.setLength(0)
-            text.append("Highscore: ${MathUtils.clamp(highScore, 0, MAX_HIGHSCORE_DISPLAYED)}")
-            invalidateHierarchy()
-        }
-    }
-
-    companion object {
-        private const val MAX_HIGHSCORE_DISPLAYED = 999
-    }
 }

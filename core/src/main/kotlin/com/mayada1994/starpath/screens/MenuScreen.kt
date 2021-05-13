@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.mayada1994.starpath.StarPath
-import com.mayada1994.starpath.StarPath.Companion.PREFERENCES_HIGHSCORE_KEY
 import com.mayada1994.starpath.asset.Asset
 import com.mayada1994.starpath.ecs.system.ItemSystem
 import com.mayada1994.starpath.ecs.system.MoveSystem
@@ -14,7 +13,6 @@ import ktx.actors.onClick
 import ktx.actors.plusAssign
 import ktx.ashley.getSystem
 import ktx.graphics.use
-import ktx.preferences.get
 
 class MenuScreen(game: StarPath, private val engine: Engine = game.engine) : BaseScreen(game) {
 
@@ -27,8 +25,14 @@ class MenuScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
             }
             dispose()
         }
-        creditsButton.onClick {
+        rulesButton.onClick {
 
+        }
+        creditsButton.onClick {
+            with(game) {
+                addScreen(CreditsScreen(this))
+                setScreen<CreditsScreen>()
+            }
         }
         quitGameButton.onClick {
             Gdx.app.exit()
@@ -45,7 +49,6 @@ class MenuScreen(game: StarPath, private val engine: Engine = game.engine) : Bas
 
     private fun setupUI() {
         ui.run {
-            updateHighScore(preferences[PREFERENCES_HIGHSCORE_KEY, 0])
             stage += this.table
         }
     }
